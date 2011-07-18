@@ -25,21 +25,20 @@ Adding this AJAX form to your web site is as simple, as adding this 2 tag to you
 
 Installation:
 ----------------------------------------------------------------------
-
-1. Install an app. Do it by adding:
+1.Install an app. Do it by adding:
 
     'multiuploader', 
 
 string to your settings.py -> INSTALLED_APPS = () dictionary.
 Note that is has to have 'sorl.thumbnail', working already.
 
-2. Register urls in your root urlconf urls.py adding string to your urlpatterns like so :
+2.Register urls in your root urlconf urls.py adding string to your urlpatterns like so :
 
     url(r'^$', 'app.views.image_view', name='main'),
 
-3. Copy or symlink files from plugins "media/" directory to your MEDIA_ROOT.
+3.Copy or symlink files from plugins "media/" directory to your MEDIA_ROOT.
 
-4. Edit templates and styles to meet your needs. (Optional)
+4.Edit templates and styles to meet your needs. (Optional)
     (for e.g. changing the form design and/or behavior)
 
 
@@ -48,24 +47,28 @@ Settings:
 
 You can override plugin behavior by adding those settings to your root settings.py:
 
-File delete url to use in your app. default value is '/multi_delete/'
-    MULTI_FILE_DELETE_URL = '/multi_delete/'
+*File delete url to use in your app. default value is '/multi_delete/'
 
-Url to show uploaded image, default is '/multi_image/' + key to identify image (about 80 characters long):
-    MULTI_IMAGE_URL = '/multi_image/'
+     MULTI_FILE_DELETE_URL = '/multi_delete/'
 
-Folder to store uploaded pictures inside your MEDIA_ROOT folder
-    MULTI_IMAGES_FOLDER = 'multiuploader_images/'
+*Url to show uploaded image, default is '/multi_image/' + key to identify image (about 80 characters long):
+
+     MULTI_IMAGE_URL = '/multi_image/'
+
+*Folder to store uploaded pictures inside your MEDIA_ROOT folder
+
+     MULTI_IMAGES_FOLDER = 'multiuploader_images/'
 
 
 Model Usage:
 ----------------------------------------------------------------------
 
 Plugin stores Uploaded images to a simple model. It has some those fields:
- - "MultiuploaderImage.filename" CharField to store original (uploaded) file filename
- - "MultiuploaderImage.file" FileField to store file link to uploaded file in file system
- - "MultiuploaderImage.key_data" CharField with randomly generated key to use in your model
- - "MultiuploaderImage.upload_date" DateTimeField to store file upload data with auto now adding
+
+* "MultiuploaderImage.filename" CharField to store original (uploaded) file filename
+* "MultiuploaderImage.file" FileField to store file link to uploaded file in file system
+* "MultiuploaderImage.key_data" CharField with randomly generated key to use in your model
+* "MultiuploaderImage.upload_date" DateTimeField to store file upload data with auto now adding
 
 You can use it directly in your code like so:
 
@@ -85,5 +88,3 @@ I will not stop on model usage here for long. Fell free to ask me any questions 
 Development plans:
 ----------------------------------------------------------------------
  - Add a way to specify which model to use to store files.
-
-

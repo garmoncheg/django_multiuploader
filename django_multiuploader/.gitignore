@@ -1,0 +1,8 @@
+/.DS_Store
+/sorl
+/manage.py
+/settings.py
+/media
+/__init__.py
+/app
+/urls.py
