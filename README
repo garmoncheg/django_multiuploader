@@ -18,7 +18,7 @@ Requirements:
 Example usage:
 ----------------------------------------------------------------------
 
-Adding this AJAX form to your web site is as simple, as adding this 2 tag to your template:
+Adding this AJAX form to your web site is as simple, as adding this 2 tags to your template:
 
     {% load multiuploader %}
     {% multiupform %}
