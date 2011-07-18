@@ -6,3 +6,4 @@
 /__init__.py
 /app
 /urls.py
+/.gitignore
