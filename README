@@ -15,6 +15,14 @@ Requirements:
     - sorl-thumbnail's(http://thumbnail.sorl.net/) (for thumbnails generation)
     - Django 1.2.5 +
 
+Tested:
+----------------------------------------------------------------------
+Currently Tested full functionality under Chrome and Firefox.
+There are known issues under other browsers such as new Safari doesnt 
+display thumbnails before image uploaded.
+And Opera somehow tries to download JSON upon adding photo.
+
+Will try to fix them as soon as possible.
 
 Example usage:
 ----------------------------------------------------------------------
@@ -48,17 +56,17 @@ Settings:
 
 You can override plugin behavior by adding those settings to your root settings.py:
 
-*File delete url to use in your app. default value is '/multi_delete/'
+*File delete url to use in your app. default value is 'multi_delete'
 
-     MULTI_FILE_DELETE_URL = '/multi_delete/'
+     MULTI_FILE_DELETE_URL = 'multi_delete'
 
-*Url to show uploaded image, default is '/multi_image/' + key to identify image (about 80 characters long):
+*Url to show uploaded image, default is 'multi_image' + key to identify image (about 80 characters long):
 
-     MULTI_IMAGE_URL = '/multi_image/'
+     MULTI_IMAGE_URL = 'multi_image'
 
 *Folder to store uploaded pictures inside your MEDIA_ROOT folder
 
-     MULTI_IMAGES_FOLDER = 'multiuploader_images/'
+     MULTI_IMAGES_FOLDER = 'multiuploader_images'
 
 
 Model Usage:

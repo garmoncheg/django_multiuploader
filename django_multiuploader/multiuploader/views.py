@@ -65,15 +65,12 @@ def multiuploader(request):
         thumb_url = im.url
 
         #settings imports
-        if settings.MULTI_FILE_DELETE_URL:
-            file_delete_url = settings.MULTI_FILE_DELETE_URL
-        else:
-            file_delete_url = '/multi_delete/'
-
-        if settings.MULTI_IMAGE_URL:
-            file_url = settings.MULTI_IMAGE_URL+image.key_data+'/'
-        else:
-            file_url = '/multi_image/'+image.key_data+'/'
+        try:
+            file_delete_url = settings.MULTI_FILE_DELETE_URL+'/'
+            file_url = settings.MULTI_IMAGE_URL+'/'+image.key_data+'/'
+        except AttributeError:
+            file_delete_url = 'multi_delete/'
+            file_url = 'multi_image/'+image.key_data+'/'
 
         #generating json response array
         result = []

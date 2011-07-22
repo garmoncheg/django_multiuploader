@@ -2,9 +2,9 @@ from django.db import models
 import random
 
 from django.conf import settings
-if settings.MULTI_IMAGES_FOLDER:
-    storage = settings.MULTI_IMAGES_FOLDER
-else:
+try:
+    storage = settings.MULTI_IMAGES_FOLDER+'/'
+except AttributeError:
     storage = 'multiuploader_images/'
 
 class MultiuploaderImage(models.Model):
