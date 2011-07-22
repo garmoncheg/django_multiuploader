@@ -34,7 +34,7 @@ Note that is has to have 'sorl.thumbnail', working already.
 
 2.Register urls in your root urlconf urls.py adding string to your urlpatterns like so :
 
-    url(r'^$', 'app.views.image_view', name='main'),
+    url(r'', include('multiuploader.urls')),
 
 3.Copy or symlink files from plugins "media/" directory to your MEDIA_ROOT.
 
