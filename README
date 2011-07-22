@@ -13,6 +13,7 @@ Requirements:
 
     - PIL(Python Imaging Library) (for sorl)
     - sorl-thumbnail's(http://thumbnail.sorl.net/) (for thumbnails generation)
+    - Django 1.2.5 +
 
 
 Example usage:
