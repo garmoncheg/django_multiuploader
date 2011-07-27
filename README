@@ -17,10 +17,8 @@ Requirements:
 
 Tested:
 ----------------------------------------------------------------------
-Currently Tested full functionality under Chrome and Firefox.
-There are known issues under other browsers such as new Safari doesnt 
-display thumbnails before image uploaded.
-And Opera somehow tries to download JSON upon adding photo.
+Currently Tested full functionality under Chrome, Firefox and Safari
+And Opera somehow fails to add multiple Photos.
 
 Will try to fix them as soon as possible.
 
@@ -97,3 +95,10 @@ I will not stop on model usage here for long. Fell free to ask me any questions 
 Development plans:
 ----------------------------------------------------------------------
  - Add a way to specify which model to use to store files.
+ 
+ 
+ 
+ Changes:
+----------------------------------------------------------------------
+
+See CHANGELOG file for additional changes upon versions.

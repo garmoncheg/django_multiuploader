@@ -1,4 +1,14 @@
 @charset 'UTF-8';
+/*
+ * jQuery File Upload UI Plugin CSS 5.0.6
+ * https://github.com/blueimp/jQuery-File-Upload
+ *
+ * Copyright 2010, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://creativecommons.org/licenses/MIT/
+ */
 
 .fileupload-buttonbar .ui-button input {
   position: absolute;
@@ -48,7 +58,7 @@
 }
 
 .fileupload-content .ui-progressbar-value {
-  background: url(../site_graphics/pbar-ani.gif);
+  background: url(pbar-ani.gif);
 }
 
 .fileupload-content .fileupload-progressbar {

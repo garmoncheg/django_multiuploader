@@ -37,7 +37,8 @@ def multiuploader_delete(request, pk):
 @csrf_exempt
 def multiuploader(request):
     """
-    Main Multiuploader module
+    Main Multiuploader module.
+    Parses data from jQuery plugin and makes database changes.
     """
     if request.method == 'POST':
         log.info('received POST to main multiuploader view')
@@ -93,6 +94,8 @@ def multiuploader(request):
         return HttpResponse('Only POST accepted')
 
 def multi_show_uploaded(request, key):
+    """Simple file view helper.
+    Used to show uploaded file directly"""
     image = get_object_or_404(MultiuploaderImage, key_data=key)
     url = settings.MEDIA_URL+image.image.name
     return render_to_response('multiuploader/one_image.html', {"multi_single_url":url,})

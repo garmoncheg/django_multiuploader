@@ -1,0 +1,19 @@
+Changelog for Django-multiuploader
+
+Django-multiuploader 1.2.0 27.07.2011
+==============================================================
+- add {% verbatim %} templatetag thanks to "dadon" issue #1
+    (implements a "more right" way to escape jQuery UI code in django templates)
+- updated Sebastian's jQuery plugin to today's ver to fix known issues.
+
+Django-multiuploader 1.1.1 26.07.2011
+==============================================================
+- critical bugfix with JSON output
+
+Django-multiuploader 1.1.0 22.07.2011
+==============================================================
+- Bugfixes and options restyle
+
+Django-multiuploader 1.0.0 19.07.2011
+==============================================================
+- Stable version
