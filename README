@@ -17,8 +17,8 @@ Requirements:
 
 Tested:
 ----------------------------------------------------------------------
-Currently Tested full functionality under Chrome, Firefox and Safari
-And Opera somehow fails to add multiple Photos.
+Currently Tested full functionality under Chrome, Firefox and Safari.
+Opera somehow fails to add multiple Photos.
 
 Will try to fix them as soon as possible.
 
@@ -29,6 +29,13 @@ Adding this AJAX form to your web site is as simple, as adding this 2 tags to yo
 
     {% load multiuploader %}
     {% multiupform %}
+
+Also I've done a demo app repo here at my github.
+It's called django_multiuploader_usage_demo.
+For those who can not figure out this manual.) Also feel free to comment it on my
+blog or send me a e-mail with your troubles/suggestions and usage experience...
+https://github.com/garmoncheg/django_multiuploader_example_usage/
+
 
 Installation:
 ----------------------------------------------------------------------
