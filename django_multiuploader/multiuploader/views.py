@@ -51,6 +51,7 @@ def multiuploader(request):
         filename = wrapped_file.name
         file_size = wrapped_file.file.size
         log.info ('Got file: "%s"' % str(filename))
+        log.info('Content type: "$s" % file.content_type')
 
         #writing file manually into model
         #because we don't need form of any type.
@@ -62,8 +63,11 @@ def multiuploader(request):
         log.info('File saving done')
 
         #getting thumbnail url using sorl-thumbnail
-        im = get_thumbnail(image, "80x80", quality=50)
-        thumb_url = im.url
+        if 'image' in file.content_type.lower():
+            im = get_thumbnail(image, "80x80", quality=50)
+            thumb_url = im.url
+        else:
+            thumb_url = ''
 
         #settings imports
         try:
