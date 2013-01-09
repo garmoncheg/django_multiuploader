@@ -55,6 +55,18 @@ Note that is has to have 'sorl.thumbnail', working already.
 4.Edit templates and styles to meet your needs. (Optional)
     (for e.g. changing the form design and/or behavior)
 
+5. Include the following js/css.
+
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" id="theme">
+	<link rel="stylesheet" href="{{ static_url }}multiuploader/styles/jquery.fileupload-ui.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="js/vendor/jquery.ui.widget.js"></script>
+	<script src="http://blueimp.github.com/JavaScript-Templates/tmpl.min.js"></script>
+	<script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
+	<script src="http://blueimp.github.com/JavaScript-Canvas-to-Blob/canvas-to-blob.min.js"></script>
+	<script src="{{ static_url }}multiuploader/scripts/jquery.fileupload.js"></script>
+	<script src="{{ static_url }}multiuploader/scripts/jquery.fileupload-fp.js"></script>
+	<script src="{{ static_url }}multiuploader/scripts/jquery.fileupload-ui.js"></script>
 
 Settings:
 ----------------------------------------------------------------------
