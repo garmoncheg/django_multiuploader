@@ -77,14 +77,21 @@ def multiuploader(request):
             file_delete_url = 'multi_delete/'
             file_url = 'multi_image/'+image.key_data+'/'
 
+        """
+        is actually: [{"name": "Screenshot from 2012-11-14 16:17:46.png", "url": "multi_image/95925526541943247735000327303075602114185579370918344597903504067450818566531/", "thumbnail_url": "/media/cache/f8/bd/f8bd83aadeba651ff9c040bb394ce117.jpg", "delete_type": "POST", "delete_url": "multi_delete/7/", "size": 38520}]
+        should be:   {"files":[{"url":"http://jquery-file-upload.appspot.com/AMIfv9734HSTDGd3tIybbnKVru--IjhjULKvNcIGUL2lvfqA93RNCAizDbvP-RQJNbh-N9m8UXsk-90jFFYSp8TlbZYhEcNN6Vb9HzQVQtdmF83H6sE_XkdnlI2V8lHX5V3Y4AamdX6VMbAt9sNWNx2BVGzhTfAYkRLYmRE1VzzWSe9C8c8Fu8g/Screenshot%20from%202012-11-14%2016%3A17%3A46.png","thumbnail_url":"http://lh5.ggpht.com/fcjVNT6qUGoMDtqqaNDNtU4mghy34qlzfj2GujikLgC7Nj5Bs4LUT_DWG_Q8OWujqvYHsKbeQ9pkvoAW4WiaubmqQxobIPyt=s80","name":"Screenshot from 2012-11-14 16:17:46.png","type":"image/png","size":38520,"delete_url":"http://jquery-file-upload.appspot.com/AMIfv9734HSTDGd3tIybbnKVru--IjhjULKvNcIGUL2lvfqA93RNCAizDbvP-RQJNbh-N9m8UXsk-90jFFYSp8TlbZYhEcNN6Vb9HzQVQtdmF83H6sE_XkdnlI2V8lHX5V3Y4AamdX6VMbAt9sNWNx2BVGzhTfAYkRLYmRE1VzzWSe9C8c8Fu8g/Screenshot%20from%202012-11-14%2016%3A17%3A46.png?delete=true","delete_type":"DELETE"}]}
+        """
+
         #generating json response array
-        result = []
-        result.append({"name":filename, 
+        result = {
+            'files': [ {"name":filename, 
                        "size":file_size, 
                        "url":file_url, 
                        "thumbnail_url":thumb_url,
                        "delete_url":file_delete_url+str(image.pk)+'/', 
-                       "delete_type":"POST",})
+                       "delete_type":"POST",}
+                    ]
+        }
         response_data = simplejson.dumps(result)
         
         #checking for json data type
