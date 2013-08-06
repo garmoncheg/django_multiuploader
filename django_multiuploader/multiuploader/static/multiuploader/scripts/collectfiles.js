@@ -1,4 +1,5 @@
-setup_filecollector = function($, uploadedWidgetHtmlName, sendbutton_selector, doSubmitLock){
+setup_filecollector = function($, wrapperElementId, uploadedWidgetHtmlName, sendbutton_selector, doSubmitLock)
+{
     /*
 
       $ - jQuery prefix
@@ -8,26 +9,34 @@ setup_filecollector = function($, uploadedWidgetHtmlName, sendbutton_selector, d
 
     */
 
-    $(document).ready(function(){
-	    function collectfiles(){
+    $(document).ready(function()
+    {
+	    function collectfiles()
+	    {
 		    var files_inputs = '';
-		    $('.filelink').each(function(i, el) { 
+		    $(wrapperElementId+' .filelink').each(function(i, el)
+		    { 
 			    files_inputs += '<input type="hidden" value="'+$(el).attr('id')+'" name="'+uploadedWidgetHtmlName+'"/>';
 		    });
-		    $("#hidden_container").append(files_inputs);
+		    alert( wrapperElementId+" #hidden_container" );
+		    $(wrapperElementId+" #hidden_container").append(files_inputs);
 	    };
 
-        $(sendbutton_selector).click(function(e){
-		    if (doSubmitLock){
-          	        var isUploading = $(".fileupload-progressbar").is(":visible");
+        $(sendbutton_selector).click(function(e)
+        {
+		    if (doSubmitLock)
+		    {
+          	        var isUploading = $(wrapperElementId+" .fileupload-progressbar").is(":visible");
 
-			        if (isUploading){
+			        if (isUploading)
+			        {
 				        e.preventDefault();
 			        }
-			        else {
+			        else
+			        {
 				        collectfiles();
 			        }
-			   }
+			}
 		    else
 			    collectfiles();
 	    });
