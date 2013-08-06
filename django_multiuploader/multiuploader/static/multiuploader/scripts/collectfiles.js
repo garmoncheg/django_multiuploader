@@ -16,7 +16,7 @@ setup_filecollector = function($, wrapperElementId, uploadedWidgetHtmlName, send
 		    var files_inputs = '';
 		    $('#'+wrapperElementId+' .filelink').each(function(i, el)
 		    { 
-			    files_inputs += '<input type="hidden" value="'+$(el).attr('id')+'" name="'+uploadedWidgetHtmlName+'"/>';
+			    files_inputs += '<input type="hidden" value="'+$(el).attr('id')+'" name="'+uploadedWidgetHtmlName+'[]"/>';
 		    });
 		    $('#'+wrapperElementId+" #hidden_container").append(files_inputs);
 	    };
