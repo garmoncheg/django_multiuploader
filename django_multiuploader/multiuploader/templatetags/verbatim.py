@@ -17,7 +17,6 @@ register = template.Library()
 
 
 class VerbatimNode(template.Node):
-
     def __init__(self, text):
         self.text = text
     
