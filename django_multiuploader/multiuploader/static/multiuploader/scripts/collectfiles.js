@@ -14,18 +14,18 @@ setup_filecollector = function($, wrapperElementId, uploadedWidgetHtmlName, send
 	    function collectfiles()
 	    {
 		    var files_inputs = '';
-		    $(wrapperElementId+' .filelink').each(function(i, el)
+		    $('#'+wrapperElementId+' .filelink').each(function(i, el)
 		    { 
 			    files_inputs += '<input type="hidden" value="'+$(el).attr('id')+'" name="'+uploadedWidgetHtmlName+'"/>';
 		    });
-		    $(wrapperElementId+" #hidden_container").append(files_inputs);
+		    $('#'+wrapperElementId+" #hidden_container").append(files_inputs);
 	    };
 
         $(sendbutton_selector).click(function(e)
         {
 		    if (doSubmitLock)
 		    {
-          	        var isUploading = $(wrapperElementId+" .fileupload-progressbar").is(":visible");
+          	        var isUploading = $('#'+wrapperElementId+" .fileupload-progressbar").is(":visible");
 
 			        if (isUploading)
 			        {
