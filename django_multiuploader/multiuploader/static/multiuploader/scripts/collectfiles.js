@@ -18,7 +18,6 @@ setup_filecollector = function($, wrapperElementId, uploadedWidgetHtmlName, send
 		    { 
 			    files_inputs += '<input type="hidden" value="'+$(el).attr('id')+'" name="'+uploadedWidgetHtmlName+'"/>';
 		    });
-		    alert( wrapperElementId+" #hidden_container" );
 		    $(wrapperElementId+" #hidden_container").append(files_inputs);
 	    };
 
