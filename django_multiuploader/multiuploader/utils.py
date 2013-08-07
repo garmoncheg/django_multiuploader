@@ -17,6 +17,45 @@ from django.core.files.uploadedfile import UploadedFile
 log = logging
 
 
+def get_thumbnail(img, thumb_size, quality=80, format='JPG'):
+    from django.db.models import ImageField
+    from django.db.models.fields.files import ImageFieldFile
+    from PIL import Image, ImageOps
+    from django.forms import forms
+    from django.core.files.base import ContentFile
+    from django.utils.encoding import smart_str
+    import cStringIO
+
+    thumb_size = thumb_size.split('x')
+        
+    img.seek(0) # see http://code.djangoproject.com/ticket/8222 for details
+    image = Image.open(img)
+    
+    # Convert to RGB if necessary
+    if image.mode not in ('L', 'RGB'):
+        image = image.convert('RGB')
+        
+    # get size
+    thumb_w = int(thumb_size[0])
+    thumb_h = int(thumb_size[1])
+    image2 = ImageOps.fit(image, (thumb_w, thumb_h), Image.ANTIALIAS)
+
+    #raise Exception( img )
+    split = img.path.rsplit('.',1)
+    try:
+        thumb_url = '%s.%sx%s.%s' % (split[0],thumb_w,thumb_h,split[1])
+    except:
+        thumb_url = '%s.%sx%s' % (split,thumb_w,thumb_h)
+    io = cStringIO.StringIO()
+    # PNG and GIF are the same, JPG is JPEG
+    if format.upper()=='JPG':
+        format = 'JPEG'
+    
+    image2.save(thumb_url, format, quality=quality)
+    import settings
+    return thumb_url.replace(settings.MEDIA_ROOT, settings.MEDIA_URL).replace('//', '/') 
+
+
 #Getting files here
 def format_file_extensions(extensions):
     return  ".(%s)$" % "|".join(extensions)
@@ -78,7 +117,7 @@ def generate_safe_pk(self):
             try:
                 self.__class__.objects.get(pk=pk)
             except:
-                return pk	
+                return pk    
 
     return wrapped
 

@@ -14,7 +14,7 @@ from utils import FileResponse
 from models import MultiuploaderFile
 from forms import MultiUploadForm, MultiuploaderMultiDeleteForm
 
-from sorl.thumbnail import get_thumbnail
+from utils import get_thumbnail
 
 log = logging
 
@@ -112,8 +112,7 @@ def multiuploader(request, noajax=False):
         thumb_url = ""
 
         try:
-            im = get_thumbnail(fl.file, "80x80", quality=50)
-            thumb_url = im.url
+            thumb_url = get_thumbnail(fl.file, "80x80", quality=50)
         except Exception as e:
             log.error(e)
             
@@ -171,8 +170,7 @@ def multi_get_files(request, fieldname, noajax=False):
     
             thumb_url = ""
             try:
-                im = get_thumbnail(fl.file, "80x80", quality=50)
-                thumb_url = im.url
+                thumb_url = get_thumbnail(fl.file, "80x80", quality=50)
             except Exception as e:
                 log.error(e)
                 
