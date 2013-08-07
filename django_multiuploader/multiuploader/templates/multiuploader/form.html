@@ -138,48 +138,53 @@
             setup_ui({{ prefix }});
         </script>
 
-        <script type="text/javascript">
-            (function ($) {
-                'use strict';
-
-                var multiuploaderSelector = '#{{ target_form_fieldname }}';
-
-                var opts = {{ multiuploader_form.options|safe }};
-
-                // Making new RegExp from django string
-                opts['acceptFileTypes'] = new RegExp(opts['acceptFileTypes'], 'i');
-                opts['maxNumberOfFiles'] = opts['maxNumberOfFiles'] - {{ number_files_attached }};
-
-                $(multiuploaderSelector).fileupload(opts);
-
-                // Load existing files:
-                $.getJSON($(multiuploaderSelector + ' form').prop('action'), function (files) {
-                    var fu = $(multiuploaderSelector).data('fileupload');
-                    fu._adjustMaxNumberOfFiles(-files.length);
-                    fu._renderDownload(files)
-                            .appendTo($(multiuploaderSelector + ' .files'))
-                            .fadeIn(function () {
-                                // Fix for IE7 and lower:
-                                $(this).show();
-                            });
-                });
-
-                // Open download dialogs via iframes,
-                // to prevent aborting current uploads:
-
-                $(multiuploaderSelector + ' .files a:not([target^=_blank])').live('click', function (e) {
-                    e.preventDefault();
-                    $('<iframe style="display:none;"></iframe>')
-                            .prop('src', this.href)
-                            .appendTo('body');
-                });
-
-                // Making multiuploader visible
-                $(multiuploaderSelector).removeAttr("style");
-
-            })({{ prefix }});
-        </script>
-        {% endblock %}
+		<script type="text/javascript">
+		    (function ($) {
+		        'use strict';
+	
+				var multiuploaderFormSelector = '{{form_selector}}';
+				var multiuploaderLoadFiles = '[name="{{target_form_fieldname}}"]';
+		        var multiuploaderSelector = '#{{ target_form_fieldname }}';
+		
+		        var opts = {{ multiuploader_form.options|safe }};
+		
+		        // Making new RegExp from django string
+		        opts['acceptFileTypes'] = new RegExp(opts['acceptFileTypes'], 'i');
+		        opts['maxNumberOfFiles'] = opts['maxNumberOfFiles'] - {{ number_files_attached|default:"0" }};
+		        $(multiuploaderSelector).fileupload(opts);
+		
+		        // Load existing files:
+		        $.getJSON("{% url 'multi_get_files' target_form_fieldname %}",
+		    	$(multiuploaderLoadFiles+','+ multiuploaderFormSelector +' [name="form_type"]').serialize(),
+		    	function (files)
+		    	{
+		            var fu = $(multiuploaderSelector).data('fileupload');
+		            alert( fu );
+		            fu._adjustMaxNumberOfFiles(-files.length);
+		            fu._renderDownload(files)
+		                    .appendTo($(multiuploaderSelector + ' .files'))
+		                    .fadeIn(function () {
+		                        // Fix for IE7 and lower:
+		                        $(this).show();
+		                    });
+		        });
+		
+		        // Open download dialogs via iframes,
+		        // to prevent aborting current uploads:
+		
+		        $(multiuploaderSelector + ' .files a:not([target^=_blank])').live('click', function (e) {
+		            e.preventDefault();
+		            $('<iframe style="display:none;"></iframe>')
+		                    .prop('src', this.href)
+		                    .appendTo('body');
+		        });
+		
+		        // Making multiuploader visible
+		        $(multiuploaderSelector).removeAttr("style");
+		
+		    })({{ prefix }});
+		</script>
+		{% endblock %}
 
         <script type="text/javascript">
             setup_filecollector({{ prefix }},"{{ target_form_fieldname }}","{{ send_button_selector }}",{% if lock_while_uploading %}true{% else %}false{% endif %});

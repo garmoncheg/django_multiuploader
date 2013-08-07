@@ -9,5 +9,11 @@ urlpatterns = patterns('',
                        url(r'^multiuploader_noajax/$', 'multiuploader.views.multiuploader', kwargs={"noajax": True},
                            name='multiploader_noajax'),
                        url(r'^multiuploader_file/(?P<pk>\w*)/$', 'multiuploader.views.multi_show_uploaded',
-                           name='multiuploader_file_link')
+                           name='multiuploader_file_link'),
+                       
+                       
+                       url(r'^multiuploader_get_files_noajax/$', 'multiuploader.views.multi_get_files', kwargs={"noajax": True},
+                           name='multiuploader_get_files_noajax'),
+                       url(r'^multiuploader_get_files/(?P<fieldname>\w*)/$', 'multiuploader.views.multi_get_files',
+                           name='multi_get_files'),
 )

@@ -144,6 +144,65 @@ def multiuploader(request, noajax=False):
         return HttpResponse('Only POST accepted')
 
 
+def multi_get_files(request, fieldname, noajax=False):
+    """
+    View to retrieve MultiuploaderFiles based on a list of ids.
+    """
+
+    if request.method == 'GET':
+        log.info('received GET to get files view')
+
+        if not u'form_type' in request.GET:
+            response_data = [{"error": _("Error when detecting form type, form_type is missing")}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        signer = Signer()
+
+        try:
+            form_type = signer.unsign(request.GET.get(u"form_type"))
+        except BadSignature:
+            response_data = [{"error": _("Tampering detected!")}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        #log.info('Got file: "%s"' % filename)
+        result = []
+        for p in request.GET.getlist(fieldname):
+            fl = MultiuploaderFile.objects.get(id=p)
+    
+            thumb_url = ""
+            try:
+                im = get_thumbnail(fl.file, "80x80", quality=50)
+                thumb_url = im.url
+            except Exception as e:
+                log.error(e)
+                
+            #generating json response array
+            result.append({"id": fl.id,
+                       "name": fl.filename,
+                       "size": fl.file.size,
+                       "url": reverse('multiuploader_file_link', args=[fl.pk]),
+                       "thumbnail_url": thumb_url,
+                       "delete_url": reverse('multiuploader_delete', args=[fl.pk]),
+                       "delete_type": "POST", })
+
+        response_data = simplejson.dumps(result)
+        
+        #checking for json data type
+        #big thanks to Guy Shapiro
+        
+        if noajax:
+            if request.META['HTTP_REFERER']:
+                redirect(request.META['HTTP_REFERER'])
+        
+        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+            mimetype = 'application/json'
+        else:
+            mimetype = 'text/plain'
+        return HttpResponse(response_data, mimetype=mimetype)
+    else:  # POST
+        return HttpResponse('Only GET accepted')
+
+
 def multi_show_uploaded(request, pk):
     fl = get_object_or_404(MultiuploaderFile, id=pk)
     return FileResponse(request,fl.file.path, fl.filename)
