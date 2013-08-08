@@ -152,6 +152,26 @@
 	        // Making new RegExp from django string
 	        opts['acceptFileTypes'] = new RegExp(opts['acceptFileTypes'], 'i');
 	        opts['maxNumberOfFiles'] = opts['maxNumberOfFiles'] - {{ number_files_attached|default:"0" }};
+	        opts['destroy'] = function (e, data)
+	        {
+	             var that = $(this).data('fileupload');  
+	             if ( confirm("Delete this file?") == true ) {
+	                 if (data.url) {
+	                     $.ajax(data)
+	                         .success(function () {
+	                             that._adjustMaxNumberOfFiles(1);
+	                             $(this).fadeOut(function () {
+	                                 $(this).remove();
+	                             });
+	                         });
+	                 } else {
+	                     data.context.fadeOut(function () {
+	                         $(this).remove();
+	                     });
+	                 }
+	             }
+	        }
+
 	        $(multiuploaderSelector).fileupload(opts);
 	
 	        // Load existing files:
@@ -168,10 +188,9 @@
 	                        $(this).show();
 	                    });
 	        });
-	
+			
 	        // Open download dialogs via iframes,
 	        // to prevent aborting current uploads:
-	
 	        $(multiuploaderSelector + ' .files a:not([target^=_blank])').live('click', function (e) {
 	            e.preventDefault();
 	            $('<iframe style="display:none;"></iframe>')
@@ -181,7 +200,9 @@
 	
 	        // Making multiuploader visible
 	        $(multiuploaderSelector).removeAttr("style");
-	
+
+
+	    	
 	    })({{ prefix }});
 	</script>
 	{% endblock %}
