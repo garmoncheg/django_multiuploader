@@ -150,6 +150,7 @@
 	        var opts = {{ multiuploader_form.options|safe }};
 	
 	        // Making new RegExp from django string
+	        opts['url'] = "{% url 'multiuploader' %}";
 	        opts['acceptFileTypes'] = new RegExp(opts['acceptFileTypes'], 'i');
 	        opts['maxNumberOfFiles'] = opts['maxNumberOfFiles'] - {{ number_files_attached|default:"0" }};
 	        opts['destroy'] = function (e, data)
