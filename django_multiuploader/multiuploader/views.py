@@ -1,112 +1,206 @@
-from django.shortcuts import get_object_or_404, render_to_response
-from django.conf import settings
-from django.http import HttpResponse, HttpResponseBadRequest
-from models import MultiuploaderImage
-from django.core.files.uploadedfile import UploadedFile
-
-#importing json parser to generate jQuery plugin friendly json response
-from django.utils import simplejson
-
-#for generating thumbnails
-#sorl-thumbnails must be installed and properly configured
-from sorl.thumbnail import get_thumbnail
-
-
-from django.views.decorators.csrf import csrf_exempt
-
 import logging
+from django.conf import settings
+
+from django.utils import simplejson
+from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext as _
+from django.core.signing import Signer, BadSignature
+from django.core.files.uploadedfile import UploadedFile
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+
+from utils import FileResponse
+from models import MultiuploaderFile
+from forms import MultiUploadForm, MultiuploaderMultiDeleteForm
+
+from utils import get_thumbnail
+
 log = logging
 
-@csrf_exempt
-def multiuploader_delete(request, pk):
-    """
-    View for deleting photos with multiuploader AJAX plugin.
-    made from api on:
-    https://github.com/blueimp/jQuery-File-Upload
-    """
+
+def multiuploader_delete_multiple(request, ok=False):
     if request.method == 'POST':
-        log.info('Called delete image. image id='+str(pk))
-        image = get_object_or_404(MultiuploaderImage, pk=pk)
-        image.delete()
-        log.info('DONE. Deleted photo id='+str(pk))
-        return HttpResponse(str(pk))
+
+        form = MultiuploaderMultiDeleteForm(request.POST)
+
+        if form.is_valid():
+            return redirect(request.META.get('HTTP_REFERER', None))
+        else:
+            pass
+
+        log.info('Called delete multiple files')
+
+        """fl = get_object_or_404(MultiuploaderFile, pk=pk)
+        fl.delete()
+        log.info('DONE. Deleted file id=' + str(pk))"""
+
+        return HttpResponse(1)
+
     else:
-        log.info('Received not POST request to delete image view')
+        log.info('Received not POST request to delete file view')
         return HttpResponseBadRequest('Only POST accepted')
 
-@csrf_exempt
-def multiuploader(request):
+
+def multiuploader_delete(request, pk):
+    if request.method == 'POST':
+        log.info('Called delete file. File id=' + str(pk))
+        fl = get_object_or_404(MultiuploaderFile, pk=pk)
+        fl.delete()
+        log.info('DONE. Deleted file id=' + str(pk))
+
+        return HttpResponse(1)
+
+    else:
+        log.info('Received not POST request to delete file view')
+        return HttpResponseBadRequest('Only POST accepted')
+
+
+def multiuploader(request, noajax=False):
     """
     Main Multiuploader module.
     Parses data from jQuery plugin and makes database changes.
     """
+
     if request.method == 'POST':
         log.info('received POST to main multiuploader view')
-        if request.FILES == None:
-            return HttpResponseBadRequest('Must have files attached!')
 
-        #getting file data for farther manipulations
-        file = request.FILES[u'files[]']
+        if request.FILES is None:
+            response_data = [{"error": _('Must have files attached!')}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        if not u'form_type' in request.POST:
+            response_data = [{"error": _("Error when detecting form type, form_type is missing")}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        signer = Signer()
+
+        try:
+            form_type = signer.unsign(request.POST.get(u"form_type"))
+        except BadSignature:
+            response_data = [{"error": _("Tampering detected!")}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        form = MultiUploadForm(request.POST, request.FILES, form_type=form_type)
+
+        if not form.is_valid():
+            error = _("Unknown error")
+
+            if "file" in form._errors and len(form._errors["file"]) > 0:
+                error = form._errors["file"][0]
+
+            response_data = [{"error": error}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        file = request.FILES[u'file']
         wrapped_file = UploadedFile(file)
         filename = wrapped_file.name
         file_size = wrapped_file.file.size
-        log.info ('Got file: "%s"' % str(filename))
-        log.info('Content type: "$s" % file.content_type')
+
+        log.info('Got file: "%s"' % filename)
 
         #writing file manually into model
         #because we don't need form of any type.
-        image = MultiuploaderImage()
-        image.filename=str(filename)
-        image.image=file
-        image.key_data = image.key_generate
-        image.save()
+        
+        fl = MultiuploaderFile()
+        fl.filename = filename
+        fl.file = file
+        fl.save()
+
         log.info('File saving done')
 
-        #getting thumbnail url using sorl-thumbnail
-        if 'image' in file.content_type.lower():
-            im = get_thumbnail(image, "80x80", quality=50)
-            thumb_url = im.url
-        else:
-            thumb_url = ''
+        thumb_url = ""
 
-        #settings imports
         try:
-            file_delete_url = settings.MULTI_FILE_DELETE_URL+'/'
-            file_url = settings.MULTI_IMAGE_URL+'/'+image.key_data+'/'
-        except AttributeError:
-            file_delete_url = 'multi_delete/'
-            file_url = 'multi_image/'+image.key_data+'/'
-
-        """
-        is actually: [{"name": "Screenshot from 2012-11-14 16:17:46.png", "url": "multi_image/95925526541943247735000327303075602114185579370918344597903504067450818566531/", "thumbnail_url": "/media/cache/f8/bd/f8bd83aadeba651ff9c040bb394ce117.jpg", "delete_type": "POST", "delete_url": "multi_delete/7/", "size": 38520}]
-        should be:   {"files":[{"url":"http://jquery-file-upload.appspot.com/AMIfv9734HSTDGd3tIybbnKVru--IjhjULKvNcIGUL2lvfqA93RNCAizDbvP-RQJNbh-N9m8UXsk-90jFFYSp8TlbZYhEcNN6Vb9HzQVQtdmF83H6sE_XkdnlI2V8lHX5V3Y4AamdX6VMbAt9sNWNx2BVGzhTfAYkRLYmRE1VzzWSe9C8c8Fu8g/Screenshot%20from%202012-11-14%2016%3A17%3A46.png","thumbnail_url":"http://lh5.ggpht.com/fcjVNT6qUGoMDtqqaNDNtU4mghy34qlzfj2GujikLgC7Nj5Bs4LUT_DWG_Q8OWujqvYHsKbeQ9pkvoAW4WiaubmqQxobIPyt=s80","name":"Screenshot from 2012-11-14 16:17:46.png","type":"image/png","size":38520,"delete_url":"http://jquery-file-upload.appspot.com/AMIfv9734HSTDGd3tIybbnKVru--IjhjULKvNcIGUL2lvfqA93RNCAizDbvP-RQJNbh-N9m8UXsk-90jFFYSp8TlbZYhEcNN6Vb9HzQVQtdmF83H6sE_XkdnlI2V8lHX5V3Y4AamdX6VMbAt9sNWNx2BVGzhTfAYkRLYmRE1VzzWSe9C8c8Fu8g/Screenshot%20from%202012-11-14%2016%3A17%3A46.png?delete=true","delete_type":"DELETE"}]}
-        """
-
+            thumb_url = get_thumbnail(fl.file, "80x80", quality=50)
+        except Exception as e:
+            log.error(e)
+            
         #generating json response array
-        result = {
-            'files': [ {"name":filename, 
-                       "size":file_size, 
-                       "url":file_url, 
-                       "thumbnail_url":thumb_url,
-                       "delete_url":file_delete_url+str(image.pk)+'/', 
-                       "delete_type":"POST",}
-                    ]
-        }
+        result = [{"id": fl.id,
+                   "name": filename,
+                   "size": file_size,
+                   "url": reverse('multiuploader_file_link', args=[fl.pk]),
+                   "thumbnail_url": thumb_url,
+                   "delete_url": reverse('multiuploader_delete', args=[fl.pk]),
+                   "delete_type": "POST", }]
+
         response_data = simplejson.dumps(result)
         
         #checking for json data type
         #big thanks to Guy Shapiro
+        
+        if noajax:
+            if request.META['HTTP_REFERER']:
+                redirect(request.META['HTTP_REFERER'])
+        
         if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
             mimetype = 'application/json'
         else:
             mimetype = 'text/plain'
         return HttpResponse(response_data, mimetype=mimetype)
-    else: #GET
+    else:  # GET
         return HttpResponse('Only POST accepted')
 
-def multi_show_uploaded(request, key):
-    """Simple file view helper.
-    Used to show uploaded file directly"""
-    image = get_object_or_404(MultiuploaderImage, key_data=key)
-    url = settings.MEDIA_URL+image.image.name
-    return render_to_response('multiuploader/one_image.html', {"multi_single_url":url,})
+
+def multi_get_files(request, fieldname, noajax=False):
+    """
+    View to retrieve MultiuploaderFiles based on a list of ids.
+    """
+
+    if request.method == 'GET':
+        log.info('received GET to get files view')
+
+        if not u'form_type' in request.GET:
+            response_data = [{"error": _("Error when detecting form type, form_type is missing")}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        signer = Signer()
+
+        try:
+            form_type = signer.unsign(request.GET.get(u"form_type"))
+        except BadSignature:
+            response_data = [{"error": _("Tampering detected!")}]
+            return HttpResponse(simplejson.dumps(response_data))
+
+        #log.info('Got file: "%s"' % filename)
+        result = []
+        for p in request.GET.getlist(fieldname):
+            fl = MultiuploaderFile.objects.get(id=p)
+    
+            thumb_url = ""
+            try:
+                thumb_url = get_thumbnail(fl.file, "80x80", quality=50)
+            except Exception as e:
+                log.error(e)
+                
+            #generating json response array
+            result.append({"id": fl.id,
+                       "name": fl.filename,
+                       "size": fl.file.size,
+                       "url": reverse('multiuploader_file_link', args=[fl.pk]),
+                       "thumbnail_url": thumb_url,
+                       "delete_url": reverse('multiuploader_delete', args=[fl.pk]),
+                       "delete_type": "POST", })
+
+        response_data = simplejson.dumps(result)
+        
+        #checking for json data type
+        #big thanks to Guy Shapiro
+        
+        if noajax:
+            if request.META['HTTP_REFERER']:
+                redirect(request.META['HTTP_REFERER'])
+        
+        if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+            mimetype = 'application/json'
+        else:
+            mimetype = 'text/plain'
+        return HttpResponse(response_data, mimetype=mimetype)
+    else:  # POST
+        return HttpResponse('Only GET accepted')
+
+
+def multi_show_uploaded(request, pk):
+    fl = get_object_or_404(MultiuploaderFile, id=pk)
+    return FileResponse(request,fl.file.path, fl.filename)
