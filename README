@@ -5,68 +5,58 @@ Readme for plugin of Django Multiuploader using jQuery Plugin by Sebastian Tscha
 
 This is a plugin, made using multiupload form from Sebastian Tschan.
 It uses jQuey UI and jQuery instead of Flash uploader.
-On Django side it uses sorl-thumbnails and PIL.
-You can use it in your applications with simple inclusion tag
+On Django side it uses PIL. You can use it in your applications with a simple inclusion tag.
 
 Requirements:
 ----------------------------------------------------------------------
 
-    - PIL(Python Imaging Library) (for sorl)
-    - sorl-thumbnail's(http://thumbnail.sorl.net/) (for thumbnails generation)
+    - PIL(Python Imaging Library)
     - Django 1.2.5 +
 
 Tested:
 ----------------------------------------------------------------------
-Currently Tested full functionality under Chrome, Firefox and Safari.
-Opera somehow fails to add multiple Photos.
-
-Will try to fix them as soon as possible.
+Currently Tested full functionality under Chrome and Firefox.
 
 Example usage:
 ----------------------------------------------------------------------
 
-Adding this AJAX form to your web site is as simple, as adding this 2 tags to your template:
+Adding this AJAX form to your web site is almost as simple as adding this 2 tags to your template:
 
     {% load multiuploader %}
     {% multiupform %}
 
-Also I've done a demo app repo here at my github.
-It's called django_multiuploader_usage_demo.
-For those who can not figure out this manual.) Also feel free to comment it on my
-blog or send me a e-mail with your troubles/suggestions and usage experience...
-https://github.com/garmoncheg/django_multiuploader_example_usage/
+Just need to adjust some parameters.
+If you need any help, found any bugs, feel free to get in contact here in github.
+Soon there'll be a blog in which I'll provide some examples and help about this package.
 
 
 Installation:
 ----------------------------------------------------------------------
-1.Install an app. Do it by adding:
+1.Download the package.
+
+This version is a branch, so the easiest way is:
+
+git clone git@github.com:kalkehcoisa/django_multiuploader.git
+
+And add the application to your project.
+
+2.Install the app. Do it by adding:
 
     'multiuploader', 
 
 string to your settings.py -> INSTALLED_APPS = () dictionary.
-Note that is has to have 'sorl.thumbnail', working already.
 
-2.Register urls in your root urlconf urls.py adding string to your urlpatterns like so :
+3.Register urls in your root urlconf urls.py adding string to your urlpatterns like so :
 
     url(r'', include('multiuploader.urls')),
 
-3.Copy or symlink files from plugins "media/" directory to your MEDIA_ROOT.
+4.Copy or symlink files from plugins "media/" directory to your MEDIA_ROOT.
 
-4.Edit templates and styles to meet your needs. (Optional)
+5.Edit templates and styles to meet your needs. (Optional)
     (for e.g. changing the form design and/or behavior)
 
-5. Include the following js/css.
-
-	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" id="theme">
-	<link rel="stylesheet" href="{{ static_url }}multiuploader/styles/jquery.fileupload-ui.css">
+6. Include the following js/css.
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="js/vendor/jquery.ui.widget.js"></script>
-	<script src="http://blueimp.github.com/JavaScript-Templates/tmpl.min.js"></script>
-	<script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
-	<script src="http://blueimp.github.com/JavaScript-Canvas-to-Blob/canvas-to-blob.min.js"></script>
-	<script src="{{ static_url }}multiuploader/scripts/jquery.fileupload.js"></script>
-	<script src="{{ static_url }}multiuploader/scripts/jquery.fileupload-fp.js"></script>
-	<script src="{{ static_url }}multiuploader/scripts/jquery.fileupload-ui.js"></script>
 
 Settings:
 ----------------------------------------------------------------------
@@ -103,19 +93,12 @@ You can use it directly in your code like so:
         image = get_object_or_404(MultiuploaderImage, key_data=key)
         url = settings.MEDIA_URL+image.image.name
         return render_to_response('multiuploader/one_image.html', {"multi_single_url":url,})
-        
-And then in template:
-
-    #'multiuploader/one_image.html'
-    <img src="{{ multi_single_url }}">
-
-I will not stop on model usage here for long. Fell free to ask me any questions appeared...
 
 Development plans:
 ----------------------------------------------------------------------
  - Add a way to specify which model to use to store files.
- 
- 
+ - Make the application easier to be configured and used.
+ - Allow more customization and provide easier ways of integration.
  
  Changes:
 ----------------------------------------------------------------------
